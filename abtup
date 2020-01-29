@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+
+import sys
+import random
+from PIL import Image
+
+out = sys.argv[1]
+
+def new_image(x, y, out, data):
+    img = Image.new('RGB', (x, y))
+    img.putdata(data)
+    img.save(out)
+
+def random_pixel():
+    return (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+
+
+def random_image(x, y, out):
+    """
+    generate random pixels for certain dimensions
+    will be just colors and stuff
+    """
+
+    pixels = []
+    print(x*y)
+    for pixel in range(0, x*y):
+        pixels.append(random_pixel())
+
+    new_image(x, y, out, pixels)
+
+
+def get_image(inf):
+    x, y = Image.open(inf).size
+    pixels = list(Image.open(inf).getdata())
+    return x, y, pixels
+
+
+def darken(inf, outf, dec):
+    x, y, pixels = get_image(inf)
+    npixels = []
+    for triples in pixels:
+        l = list(triples)
+        l[0] = l[0] - dec
+        l[1] = l[1] - dec
+        l[2] = l[2] - dec
+
+        npixels.append(tuple(l))
+
+    new_image(x, y, outf, npixels)
+
+
+def brighten(inf, outf, dec):
+    x, y, pixels = get_image(inf)
+
+    npixels = []
+    for triples in pixels:
+        l = list(triples)
+        l[0] = l[0] + dec
+        l[1] = l[1] + dec
+        l[2] = l[2] + dec
+
+        npixels.append(tuple(l))
+
+    new_image(x, y, outf, npixels)
+
+
+def warming(inf, outf, dec):
+    x, y, pixels = get_image(inf)
+
+    npixels = []
+    for triples in pixels:
+        l = list(triples)
+        l[0] = l[0] + dec
+        l[2] = l[2] - dec
+
+
+        npixels.append(tuple(l))
+
+    new_image(x, y, outf, npixels)
+
+def randomize_vals(inf, outf, r, g, b):
+    x, y, pixels = get_image(inf)
+
+    npixels = []
+    for triples in pixels:
+        l = list(triples)
+        l[0] = l[0] - random.randint(0,warmth)
+        l[1] = l[1] - random.randint(0,warmth/2)
+        l[2] = l[2] - random.randint(0,warmth/2)
+
+        npixels.append(tuple(l))
+
+    new_image(x, y, outf, npixels)
+
+random_image(30, 30, out)
+# darken("cat.png", "dark.png", 100)
+# brighten("cat.png", "bright.png", 100)
+#warming("cat.png", out, 50)
+
+
+#randomize_vals("cat.png", "rand.png", 128)
