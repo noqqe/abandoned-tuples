@@ -127,12 +127,29 @@ def flatten(inf, outf, fn):
 
     new_image(x, y, outf, npixels)
 
+
+def iso(inf, outf):
+    x, y, pixels = get_image(inf)
+
+    npixels = []
+    for triples in pixels:
+        l = list(triples)
+        r = random.randint(0,90)
+        l[0] = l[0] + r
+        l[1] = l[1] + r
+        l[2] = l[2] + r
+
+        npixels.append(tuple(l))
+
+    new_image(x, y, outf, npixels)
+
 # random_image(30, 30, out)
 # darken("cat.png", "dark.png", 100)
 # brighten("cat.png", "bright.png", 100)
 # warming("cat2.png", out, 50)
 # cooling("cat2.png", out, 50)
-flatten("cat3.png", out, 100)
+# flatten("coffee.png", out, 50)
+iso("sky", out)
 
 
 # for b in range(0,25):
