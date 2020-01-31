@@ -22,7 +22,6 @@ def random_image(x, y, out):
     """
 
     pixels = []
-    print(x*y)
     for pixel in range(0, x*y):
         pixels.append(random_pixel())
 
@@ -37,6 +36,7 @@ def get_image(inf):
 
 def darken(inf, outf, dec):
     x, y, pixels = get_image(inf)
+
     npixels = []
     for triples in pixels:
         l = list(triples)
@@ -78,24 +78,66 @@ def warming(inf, outf, dec):
 
     new_image(x, y, outf, npixels)
 
+
+def cooling(inf, outf, dec):
+    x, y, pixels = get_image(inf)
+
+    npixels = []
+    for triples in pixels:
+        l = list(triples)
+        l[0] = l[0] - dec
+        l[2] = l[2] + dec
+
+
+        npixels.append(tuple(l))
+
+    new_image(x, y, outf, npixels)
+
 def randomize_vals(inf, outf, r, g, b):
     x, y, pixels = get_image(inf)
 
     npixels = []
     for triples in pixels:
         l = list(triples)
-        l[0] = l[0] - random.randint(0,warmth)
-        l[1] = l[1] - random.randint(0,warmth/2)
-        l[2] = l[2] - random.randint(0,warmth/2)
+        l[0] = l[0] + r
+        l[1] = l[1] + g
+        l[2] = l[2] + b
 
         npixels.append(tuple(l))
 
     new_image(x, y, outf, npixels)
 
-random_image(30, 30, out)
+
+def flatten(inf, outf, fn):
+    x, y, pixels = get_image(inf)
+
+    npixels = []
+    for triples in pixels:
+        l = list(triples)
+        if l[0] < fn:
+            l[0] = fn
+
+        if l[1] < fn:
+            l[1] = fn
+
+        if l[2] < fn:
+            l[2] = fn
+
+        npixels.append(tuple(l))
+
+    new_image(x, y, outf, npixels)
+
+# random_image(30, 30, out)
 # darken("cat.png", "dark.png", 100)
 # brighten("cat.png", "bright.png", 100)
-#warming("cat.png", out, 50)
+# warming("cat2.png", out, 50)
+# cooling("cat2.png", out, 50)
+flatten("cat3.png", out, 100)
 
 
-#randomize_vals("cat.png", "rand.png", 128)
+# for b in range(0,25):
+#     r = random.randint(0,128)
+#     g = random.randint(0,128)
+#     b = random.randint(0,128)
+#     randomize_vals("cat3.png", "./random/cat-r{}-g{}-b{}.png".format(r,g,b), r, g, b)
+
