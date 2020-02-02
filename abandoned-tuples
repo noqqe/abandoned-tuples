@@ -108,7 +108,7 @@ def contrast(pixels, contrast=90):
 
 def main():
 
-    parser = argparse.ArgumentParser(prog='PROG')
+    parser = argparse.ArgumentParser(prog='Abandoned Tuples')
     parser.add_argument('-c', '--contrast', type=int, nargs=1, help='Add contrast filter (-255 to +255)')
     parser.add_argument('-i', '--iso', type=int, nargs=1, help='Add iso filter')
     parser.add_argument('-f', '--flatten', type=int, nargs=1, help='Add flattening filter (0 to 255)')
@@ -122,7 +122,7 @@ def main():
     # Read file
     x, y, pixels = get_image(args.source)
 
-    print(args.contrast)
+    # Apply filters
     if args.contrast:
         pixels = contrast(pixels, args.contrast[0])
 
