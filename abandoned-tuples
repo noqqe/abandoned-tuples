@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+
+import argparse
+import sys
+import random
+from PIL import Image
+
+# Saving / Writng
+
+
+def new_image(x, y, out, data):
+    img = Image.new('RGB', (x, y))
+    img.putdata(data)
+    img.save(out)
+
+
+def get_image(inf):
+    x, y = Image.open(inf).size
+    pixels = list(Image.open(inf).getdata())
+    return x, y, pixels
+
+
+# Modification
+
+
+def brightness(pixels, dec):
+    """
+    Takes values from -255 to +255
+    """
+
+    npixels = []
+    for triples in pixels:
+        l = list(triples)
+        l[0] = l[0] + dec
+        l[1] = l[1] + dec
+        l[2] = l[2] + dec
+
+        npixels.append(tuple(l))
+
+    return npixels
+
+
+def temperature(pixels, dec):
+
+    npixels = []
+    for triples in pixels:
+        l = list(triples)
+        l[0] = l[0] + dec
+        l[2] = l[2] - dec
+
+        npixels.append(tuple(l))
+
+    return npixels
+
+
+def flatten(pixels, fn):
+
+    npixels = []
+    for triples in pixels:
+        l = list(triples)
+        if l[0] < fn:
+            l[0] = fn
+
+        if l[1] < fn:
+            l[1] = fn
+
+        if l[2] < fn:
+            l[2] = fn
+
+        npixels.append(tuple(l))
+
+    return npixels
+
+
+def iso(pixels, dec=90):
+
+    npixels = []
+    for triples in pixels:
+        l = list(triples)
+        r = random.randint(0,90)
+        l[0] = l[0] + r
+        l[1] = l[1] + r
+        l[2] = l[2] + r
+
+        npixels.append(tuple(l))
+
+    return npixels
+
+
+def contrast(pixels, contrast=90):
+
+    factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
+
+    npixels = []
+    for triples in pixels:
+        l = list(triples)
+
+        l[0] = int(factor * (l[0] - 128) + 128)
+        l[1] = int(factor * (l[1] - 128) + 128)
+        l[2] = int(factor * (l[2] - 128) + 128)
+
+        npixels.append(tuple(l))
+
+    return npixels
+
+# warming("cat2.png", out, 50)
+# cooling("cat2.png", out, 50)
+
+def main():
+
+    parser = argparse.ArgumentParser(prog='PROG')
+    parser.add_argument('-c', '--contrast', type=int, nargs=1, help='Add contrast filter (-255 to +255)')
+    parser.add_argument('-i', '--iso', type=int, nargs=1, help='Add iso filter')
+    parser.add_argument('-f', '--flatten', type=int, nargs=1, help='Add flattening filter (0 to 255)')
+    parser.add_argument('-b', '--brightness', type=int, nargs=1, help='Modify brightness (-255 to +255)')
+    parser.add_argument('-t', '--temperature', type=int, nargs=1, help='Modify temperature (warm/cool) (-255 to +255)')
+    parser.add_argument('source', help='Source file to read from')
+    parser.add_argument('output', help='Destination file to write to')
+
+    args = parser.parse_args()
+
+    # Read file
+    x, y, pixels = get_image(args.source)
+
+    print(args.contrast)
+    if args.contrast:
+        pixels = contrast(pixels, args.contrast[0])
+
+    if args.iso:
+        pixels = iso(pixels, args.iso[0])
+
+    if args.flatten:
+        pixels = flatten(pixels, args.flatten[0])
+
+    if args.brightness:
+        pixels = brightness(pixels, args.brightness[0])
+
+    if args.temperature:
+        pixels = temperature(pixels, args.temperature[0])
+
+    # Write file with all changes to
+    new_image(x, y, args.output, pixels)
+
+
+main()
