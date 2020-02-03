@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
+import resource
+import timeit
 import argparse
-import sys
 import random
 from PIL import Image
 
@@ -108,6 +109,7 @@ def contrast(pixels, contrast=90):
 
 def main():
 
+    # Commandline options
     parser = argparse.ArgumentParser(prog='Abandoned Tuples')
     parser.add_argument('-c', '--contrast', type=int, nargs=1, help='Add contrast filter (-255 to +255)')
     parser.add_argument('-i', '--iso', type=int, nargs=1, help='Add iso filter (0 to 255)')
@@ -116,8 +118,10 @@ def main():
     parser.add_argument('-t', '--temperature', type=int, nargs=1, help='Modify temperature (warm/cool) (-255 to +255)')
     parser.add_argument('source', help='Source file to read from')
     parser.add_argument('output', help='Destination file to write to')
-
     args = parser.parse_args()
+
+    # Printing
+    start = timeit.default_timer()
 
     # Read file
     x, y, pixels = get_image(args.source)
@@ -140,6 +144,11 @@ def main():
 
     # Write file with all changes to
     new_image(x, y, args.output, pixels)
+
+    # Print timing and memory
+    stop = timeit.default_timer()
+    print('Time: ', stop - start)
+    print("Memory: {:.2} GB".format(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024 / 1024 / 1024))
 
 
 main()
