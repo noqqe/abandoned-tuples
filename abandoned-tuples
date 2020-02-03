@@ -29,36 +29,32 @@ def brightness(pixels, dec):
     Takes values from -255 to +255
     """
 
-    npixels = []
-    for triples in pixels:
-        l = list(triples)
+    for i, pixel in enumerate(pixels):
+        l = list(pixel)
         l[0] = l[0] + dec
         l[1] = l[1] + dec
         l[2] = l[2] + dec
 
-        npixels.append(tuple(l))
+        pixels[i] = tuple(l)
 
-    return npixels
+    return pixels
 
 
 def temperature(pixels, dec):
 
-    npixels = []
-    for triples in pixels:
-        l = list(triples)
+    for i, pixel in enumerate(pixels):
+        l = list(pixel)
         l[0] = l[0] + dec
         l[2] = l[2] - dec
+        pixels[i] = tuple(l)
 
-        npixels.append(tuple(l))
-
-    return npixels
+    return pixels
 
 
 def flatten(pixels, fn):
 
-    npixels = []
-    for triples in pixels:
-        l = list(triples)
+    for i, pixel in enumerate(pixels):
+        l = list(pixel)
         if l[0] < fn:
             l[0] = fn
 
@@ -68,41 +64,36 @@ def flatten(pixels, fn):
         if l[2] < fn:
             l[2] = fn
 
-        npixels.append(tuple(l))
+        pixels[i] = tuple(l)
 
-    return npixels
+    return pixels
 
 
 def iso(pixels, dec):
 
-    npixels = []
-    for triples in pixels:
-        l = list(triples)
+    for i, pixel in enumerate(pixels):
+        l = list(pixel)
         r = random.randint(0, dec)
         l[0] = l[0] + r
         l[1] = l[1] + r
         l[2] = l[2] + r
+        pixels[i] = tuple(l)
 
-        npixels.append(tuple(l))
-
-    return npixels
+    return pixels
 
 
 def contrast(pixels, contrast=90):
 
     factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
 
-    npixels = []
-    for triples in pixels:
-        l = list(triples)
-
+    for i, pixel in enumerate(pixels):
+        l = list(pixel)
         l[0] = int(factor * (l[0] - 128) + 128)
         l[1] = int(factor * (l[1] - 128) + 128)
         l[2] = int(factor * (l[2] - 128) + 128)
+        pixels[i] = tuple(l)
 
-        npixels.append(tuple(l))
-
-    return npixels
+    return pixels
 
 # warming("cat2.png", out, 50)
 # cooling("cat2.png", out, 50)
