@@ -10,12 +10,22 @@ from PIL import Image
 
 
 def new_image(x, y, out, data):
+    """
+    Create Image with x * y dimensions and write list of tuples as content
+    :x: int
+    :y: int
+    :out: string (valid file path)
+    :data: list of tuples
+    """
     img = Image.new('RGB', (x, y))
     img.putdata(data)
     img.save(out)
 
 
 def get_image(inf):
+    """
+    Reads file and extracts dimensions and data as list
+    """
     x, y = Image.open(inf).size
     pixels = list(Image.open(inf).getdata())
     return x, y, pixels
@@ -27,6 +37,12 @@ def get_image(inf):
 def brightness(pixels, dec):
     """
     Takes values from -255 to +255
+
+    Make images brighter/darker by adding/reducing rgb values
+
+    [ (255,255,255), (145,77,83), ... ]
+    ... to ...
+    [ (235,235,235), (115,47,63), ... ]
     """
 
     for i, pixel in enumerate(pixels):
@@ -41,6 +57,13 @@ def brightness(pixels, dec):
 
 
 def temperature(pixels, dec):
+    """
+    Makes image look warmer/cooler than before by adding/reducing for red and blue
+
+    [ (230, 155, 30), ... ]
+       -20,   0, +20
+    [ (210, 155, 50), ... ]
+    """
 
     for i, pixel in enumerate(pixels):
         l = list(pixel)
@@ -52,6 +75,13 @@ def temperature(pixels, dec):
 
 
 def flatten(pixels, fn):
+    """
+    Raises lower limits of blacks what results in reduing depth and details.
+
+    [ (48, 150, 30) ]
+       < ,  > , <
+    [ (50, 150, 50) ]
+    """
 
     for i, pixel in enumerate(pixels):
         l = list(pixel)
@@ -70,6 +100,13 @@ def flatten(pixels, fn):
 
 
 def iso(pixels, dec):
+    """
+    Adds noise to an image resulting in having an high ISO like
+    look. Done by adding random values in a certain range to the rgb value.
+
+    [ (48, 150, 30), (49, 151, 31) ]
+       +10,+10,+10    +1, +1, +1
+    """
 
     for i, pixel in enumerate(pixels):
         l = list(pixel)
@@ -83,6 +120,21 @@ def iso(pixels, dec):
 
 
 def contrast(pixels, contrast=90):
+    """
+    Calculating contrast is bascially making low values lower
+    and high values higher
+
+    We use a factor that is precalculated and apply this to a normalized
+    version of each RGB value
+
+    [103, 148, 205]
+    ... to ...
+    [76, 169, 287]
+
+    Example calc
+    ((103 - 128) * 2.073) + 128 = 76
+    """
+    k
 
     factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
 
@@ -95,8 +147,6 @@ def contrast(pixels, contrast=90):
 
     return pixels
 
-# warming("cat2.png", out, 50)
-# cooling("cat2.png", out, 50)
 
 def main():
 
@@ -107,8 +157,8 @@ def main():
     parser.add_argument('-f', '--flatten', type=int, nargs=1, help='Add flattening filter (0 to 255)')
     parser.add_argument('-b', '--brightness', type=int, nargs=1, help='Modify brightness (-255 to +255)')
     parser.add_argument('-t', '--temperature', type=int, nargs=1, help='Modify temperature (warm/cool) (-255 to +255)')
-    parser.add_argument('source', help='Source file to read from')
-    parser.add_argument('output', help='Destination file to write to')
+    parser.add_argument('source', help='Image you want to modify')
+    parser.add_argument('output', help='Destination file to write result to')
     args = parser.parse_args()
 
     # Printing
