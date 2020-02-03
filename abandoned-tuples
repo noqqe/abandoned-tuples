@@ -72,12 +72,12 @@ def flatten(pixels, fn):
     return npixels
 
 
-def iso(pixels, dec=90):
+def iso(pixels, dec):
 
     npixels = []
     for triples in pixels:
         l = list(triples)
-        r = random.randint(0,90)
+        r = random.randint(0, dec)
         l[0] = l[0] + r
         l[1] = l[1] + r
         l[2] = l[2] + r
@@ -110,7 +110,7 @@ def main():
 
     parser = argparse.ArgumentParser(prog='Abandoned Tuples')
     parser.add_argument('-c', '--contrast', type=int, nargs=1, help='Add contrast filter (-255 to +255)')
-    parser.add_argument('-i', '--iso', type=int, nargs=1, help='Add iso filter')
+    parser.add_argument('-i', '--iso', type=int, nargs=1, help='Add iso filter (0 to 255)')
     parser.add_argument('-f', '--flatten', type=int, nargs=1, help='Add flattening filter (0 to 255)')
     parser.add_argument('-b', '--brightness', type=int, nargs=1, help='Modify brightness (-255 to +255)')
     parser.add_argument('-t', '--temperature', type=int, nargs=1, help='Modify temperature (warm/cool) (-255 to +255)')
