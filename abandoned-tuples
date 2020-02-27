@@ -147,6 +147,24 @@ def contrast(pixels, contrast=90):
     return pixels
 
 
+def color(pixels, color, value):
+    """
+    Modifies single value (r/g/b) from pixel to be more free regarding colorization
+
+    For a green tint, this would do +20
+    [103, 148, 205]
+          +20
+    [103, 148, 205]
+    """
+
+    for i, pixel in enumerate(pixels):
+        l = list(pixel)
+        l[color] = l[color] + value
+        pixels[i] = tuple(l)
+
+    return pixels
+
+
 def main():
 
     # Commandline options
@@ -156,6 +174,9 @@ def main():
     parser.add_argument('-f', '--flatten', type=int, nargs=1, help='Add flattening filter (0 to 255)')
     parser.add_argument('-b', '--brightness', type=int, nargs=1, help='Modify brightness (-255 to +255)')
     parser.add_argument('-t', '--temperature', type=int, nargs=1, help='Modify temperature (warm/cool) (-255 to +255)')
+    parser.add_argument('-r', '--red', type=int, nargs=1, help='Modify red color (-255 to +255)')
+    parser.add_argument('-g', '--green', type=int, nargs=1, help='Modify green color (-255 to +255)')
+    parser.add_argument('-u', '--blue', type=int, nargs=1, help='Modify blue color (-255 to +255)')
     parser.add_argument('source', help='Image you want to modify')
     parser.add_argument('output', help='Destination file to write result to')
     args = parser.parse_args()
@@ -167,6 +188,16 @@ def main():
     x, y, pixels = get_image(args.source)
 
     # Apply filters
+
+    if args.red:
+        pixels = color(pixels, 0, args.red[0])
+
+    if args.green:
+        pixels = color(pixels, 1, args.green[0])
+
+    if args.blue:
+        pixels = color(pixels, 2, args.blue[0])
+
     if args.contrast:
         pixels = contrast(pixels, args.contrast[0])
 
@@ -181,6 +212,7 @@ def main():
 
     if args.temperature:
         pixels = temperature(pixels, args.temperature[0])
+
 
     # Write file with all changes to
     new_image(x, y, args.output, pixels)
