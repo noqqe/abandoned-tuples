@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import resource
 import timeit
 import argparse
@@ -26,7 +27,12 @@ def get_image(inf):
     """
     Reads file and extracts dimensions and data as list
     """
-    x, y = Image.open(inf).size
+    try:
+        x, y = Image.open(inf).size
+    except FileNotFoundError:
+        print("Error: {} file not found.".format(inf))
+        sys.exit(1)
+
     pixels = list(Image.open(inf).getdata())
     return x, y, pixels
 
